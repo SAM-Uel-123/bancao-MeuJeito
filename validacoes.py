@@ -55,6 +55,18 @@ class validar_informacoes:
 
     """
 
+    def ler_csv(endereco):
+        import csv
+        dados = []
+        with open(endereco, 'r') as rarq:
+            iterator = csv.reader(rarq)
+            for linha in iterator:
+                if linha:
+                    dados.append(linha)
+
+            return dados[:]
+
+
     def checar_arquivos_de_contas():
         """
     Essa Função trata de checar se nosso "Banco de Dados" está "online"
@@ -92,6 +104,9 @@ class validar_informacoes:
             if not  dados or len(dados[0]) < 7:
                 infos = ['id', 'status', 'senha', 'titular', 'tipo_da_conta', 'divida', 'saldo']
                 wcsv.writerow(infos)
+                return False
+
+        return True
 
     def _salvar_informacoes(obj_conta):
         """
@@ -131,7 +146,7 @@ class validar_informacoes:
 
         """
         import csv
-        checar_arquivos_de_contas()
+        validar_informacoes.checar_arquivos_de_contas()
         with open('contas.csv', 'r') as rarq:
             iterator = csv.reader(rarq)
             for linha in iterator:
@@ -221,3 +236,27 @@ de conta, que foi usado para criar sua conta.
             print(' Titular errado')
         
         return False
+
+
+    def apagar_conta(obj_conta):
+        """
+    Essa Função trata de deletar uma conta do nosso "Banco de Dados"
+
+        """
+        import csv
+        if not validar_informacoes.checar_arquivos_de_contas():
+            return False
+        
+        autenticacao.deslogar_da_conta(obj_conta)
+        dados = []
+        dados = validar_informacoes.ler_csv('contas.csv')
+        for index, dado in enumerate(dados):
+            if dado[3] == obj_conta.titular_da_conta:
+                dados.pop(index)
+        
+        with open('contas.csv', 'w') as warq:
+            arqWriter = csv.writer(warq)
+            for dado in dados:
+                arqWriter.writerow(dado)
+
+                

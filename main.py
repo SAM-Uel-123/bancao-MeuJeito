@@ -7,11 +7,12 @@ import conta
 #======================= #
 #     -   Variaveis   -   
 #======================= #
-linhas = lambda msg: cli.detalhes.linhas(msg)
+limpar = True
+linhas = lambda msg, limpar = limpar: cli.detalhes.linhas(msg, limpar = limpar)
 clear = lambda: os.system('clear')
 cliOpcoes = None
 conta_atual = None
-limpar = True
+
 
 
 
@@ -38,17 +39,38 @@ while True:
 
     if opcao == 1:
         while True:
-            conta_atual = conta.ContaBanco()
-            titular_da_conta = input('Seu nome: ')
-            if titular_duplicado(titular_da_conta):
-                print(' esse usuario já existe, tente outro')
-                continue
+            if limpar:
+                clear()
 
-            linhas('Tipos de conta')
-            print(' cc: Conta Corente,  cp: Conta Poupança.')
-            tipo_da_conta = input('Opção: ')
+            conta_atual = conta.ContaBanco()
+            while True:
+                if limpar:
+                    clear()
+
+                titular_da_conta = input('Seu nome: ')
+                if validar_informacoes.titular_duplicado(titular_da_conta):
+                    print(' esse usuario já existe, tente outro')
+                
+                else:
+                    break
+
+                input(' Precione "ENTER" para continuar')
+
+            while True:
+                linhas('Tipos de conta', limpar = limpar)
+                print(' cc: Conta Corente,  cp: Conta Poupança.')
+                tipo_da_conta = input('Opção: ')
+                if tipo_da_conta in ['cc', 'ca']:
+                    break
+                    
+                else:
+                    print(' Escolha somente as opções listadas.')
+
+                input(' Precione "ENTER" para continuar.')
+
             senha = ''
             while not senha:
+                linhas('Digite uma senha', limpar = limpar)
                 tmp_senha = input(' Senha ')
                 if not tmp_senha:
                     print(' Preencha o espaço da senha. ')
@@ -68,8 +90,8 @@ while True:
                         print('Opção invalida, tente somente (S) para sim e (N) para não.')
             break
 
-
-        conta_atual.abrir_conta(titular_da_conta, tipo_da_conta)
+        
+        conta_atual.ativar_conta(titular_da_conta, tipo_da_conta)
         if conta_atual.status_da_conta:
             print(' Parabens! sua conta foi criada com sucesso.')
             conta_atual.senha = senha
@@ -92,7 +114,7 @@ while True:
     elif opcao == 2:
         conta_atual =  autenticacao.logar_na_conta()
         if conta_atual:
-            cliOpcoes = cli.opcoes_conta(conta_atual, conta_atual.senha)
+            cliOpcoes = cli.opcoes_conta(conta_atual)
             cliOpcoes.menu(limpar = limpar)
 
 

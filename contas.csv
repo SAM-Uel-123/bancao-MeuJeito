@@ -1,2 +1,4 @@
 id,status,senha,titular,tipo_da_conta,divida,saldo
-
+7,True,b,b,cc,12,50
+3,True,a,a,cc,12,50
+8,True,a,bv,cc,12,50
